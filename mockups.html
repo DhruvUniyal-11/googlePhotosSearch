@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryLens — Mobile Wireframes & UX Journey (Phone Format)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #090e17;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: #94a3b8;
+      font-size: 15px;
+    }
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 32px;
+    }
+    .mockup-card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .mockup-step {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #38bdf8;
+      margin-bottom: 6px;
+    }
+    .mockup-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+    .phone-container {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    }
+    .phone-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .annotation-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-left: 4px solid #38bdf8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    .annotation-box.gold {
+      border-color: rgba(245, 158, 11, 0.25);
+      border-left-color: #f59e0b;
+    }
+    .annotation-box.green {
+      border-color: rgba(16, 185, 129, 0.25);
+      border-left-color: #10b981;
+    }
+    .annotation-box.purple {
+      border-color: rgba(168, 85, 247, 0.25);
+      border-left-color: #a855f7;
+    }
+    .ann-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .annotation-box.gold .ann-tag { color: #fbbf24; }
+    .annotation-box.green .ann-tag { color: #34d399; }
+    .annotation-box.purple .ann-tag { color: #c084fc; }
+    .ann-desc {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📱 MemoryLens — Mobile Wireframes & UX Journey</h1>
+    <p>6 Annotated Mockups in Smartphone Format (9:16) Illustrating the End-to-End Vague-Memory Retrieval Experience</p>
+  </div>
+
+  <div class="journey-grid">
+    <!-- Screen 1 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 1 · Entry Point</div>
+      <div class="mockup-title">Home / Library Grid</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups/mockup_1_home_grid_1791243759648.jpg" alt="Home Grid">
+      </div>
+      <div class="annotation-box">
+        <div class="ann-tag">[Annotation 1.1] Natural Language Search Bar</div>
+        <div class="ann-desc">Prompts human phrasing ("who, where, or what") rather than rigid tag syntax.</div>
+      </div>
+      <div class="annotation-box">
+        <div class="ann-tag">[Annotation 1.2] Real-Time Search Mode Toggle</div>
+        <div class="ann-desc">Enables side-by-side verification comparing AI decomposed search against the literal keyword baseline.</div>
+      </div>
+    </div>
+
+    <!-- Screen 2 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 2 · Feature 1</div>
+      <div class="mockup-title">Multi-Signal Query Decomposition</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups/mockup_2_query_decomp_1791243775618.jpg" alt="Query Decomposition">
+      </div>
+      <div class="annotation-box">
+        <div class="ann-tag">[Annotation 2.1] Vague Memory Expression</div>
+        <div class="ann-desc">User searches "photo with my roommate at the café" without knowing tagged names or exact store titles.</div>
+      </div>
+      <div class="annotation-box">
+        <div class="ann-tag">[Annotation 2.2] 5-Signal Entity Extraction</div>
+        <div class="ann-desc">Maps "roommate" to Ananya via People Graph; maps "café" to outdoor seating. 1.25x synergy multiplier boosts co-occurrence.</div>
+      </div>
+    </div>
+
+    <!-- Screen 3 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 3 · Feature 2</div>
+      <div class="mockup-title">Clarifying Question Card (Ambiguity)</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups/mockup_3_clarifying_card_1791243792577.jpg" alt="Clarifying Question">
+      </div>
+      <div class="annotation-box gold">
+        <div class="ann-tag">[Annotation 3.1] Entropy-Driven Trigger</div>
+        <div class="ann-desc">Triggered when >8 photos match within 15% score band. Identifies Location as highest variance and asks 1 question.</div>
+      </div>
+      <div class="annotation-box gold">
+        <div class="ann-tag">[Annotation 3.2] Strict 1-Turn Maximum Limit</div>
+        <div class="ann-desc">Never chains questions. Tapping Skip or an unmapped answer immediately renders the best-effort top-8 shortlist.</div>
+      </div>
+    </div>
+
+    <!-- Screen 4 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 4 · Feature 3</div>
+      <div class="mockup-title">Ranked Shortlist with Explanations</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups/mockup_4_ranked_shortlist_1791243814746.jpg" alt="Ranked Shortlist">
+      </div>
+      <div class="annotation-box green">
+        <div class="ann-tag">[Annotation 4.1] Strict Max-8 Item Ceiling</div>
+        <div class="ann-desc">Cures Stage 4 Evaluation Overload. Never dumps endless grids; caps display to 8 highest-confidence candidates.</div>
+      </div>
+      <div class="annotation-box green">
+        <div class="ann-tag">[Annotation 4.2] Deterministic Explanations</div>
+        <div class="ann-desc">Template-generated strings ("Matches relational 'roommate' + visual 'Blue Bottle'") guarantee zero hallucination.</div>
+      </div>
+    </div>
+
+    <!-- Screen 5 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 5 · Scenario B</div>
+      <div class="mockup-title">Document Purpose vs. Raw OCR</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups/mockup_5_document_intent_1791243832325.jpg" alt="Document Intent">
+      </div>
+      <div class="annotation-box purple">
+        <div class="ann-tag">[Annotation 5.1] Intent Over Raw OCR Text</div>
+        <div class="ann-desc">Matches document_purpose ("laptop purchase receipt") rather than forgettable OCR model strings ("M3 Max").</div>
+      </div>
+      <div class="annotation-box purple">
+        <div class="ann-tag">[Annotation 5.2] Adversarial Distractor Rejection</div>
+        <div class="ann-desc">Visual-only laptop photo correctly filtered; paper receipt photo takes #1 Rank cleanly.</div>
+      </div>
+    </div>
+
+    <!-- Screen 6 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 6 · Confirmation</div>
+      <div class="mockup-title">Lightbox Detail & Metadata Sheet</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups/mockup_6_detail_lightbox_1791243851531.jpg" alt="Detail Lightbox">
+      </div>
+      <div class="annotation-box">
+        <div class="ann-tag">[Annotation 6.1] Mobile Bottom Sheet Inspector</div>
+        <div class="ann-desc">Frosted glass drawer provides full transparency into the underlying People Graph and visual tag associations.</div>
+      </div>
+      <div class="annotation-box">
+        <div class="ann-tag">[Annotation 6.2] Ground-Truth Verification</div>
+        <div class="ann-desc">Confirms Relationship ("roommate"), Person ("Ananya"), Place, and Event tags with 1-tap return to results.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
