@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryLens — AI Vague-Memory Photo Retrieval</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header Shell (Google Photos Interaction Pattern) -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-title" id="brandHomeBtn" style="cursor: pointer;" title="Back to Library Grid">
+        <div class="brand-icon">✨</div>
+        <span>MemoryLens</span>
+      </div>
+
+      <!-- Prominent Search Bar (Wired to Phase 2 API) -->
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Search for a photo — try describing who, where, or what happened..."
+          aria-label="Search photos using natural language"
+          autocomplete="off"
+        >
+        <button id="clearSearchBtn" class="clear-search-btn" style="display: none;" title="Clear search">&times;</button>
+      </div>
+
+      <!-- Search Mode Toggle Switch -->
+      <div class="toggle-group" id="modeToggle" title="Toggle Search Engine Mode">
+        <button class="toggle-btn active" data-mode="ai">AI Decomposed</button>
+        <button class="toggle-btn" data-mode="literal">Literal Baseline</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main class="main-content">
+    <div class="phase-banner" id="phaseBanner">
+      <div class="phase-banner-badge">Phase 3 Active</div>
+      <div id="bannerText">
+        <strong>Ranked Shortlist UI Wired:</strong> Type a vague memory in the search bar above to test multi-signal AI decomposition vs. literal baseline search.
+      </div>
+    </div>
+
+    <!-- Active Search Header (Shown when searching) -->
+    <div id="searchHeader" class="search-header-bar" style="display: none;">
+      <div class="search-title-group">
+        <h2 id="searchQueryTitle" class="search-query-title"></h2>
+        <span id="searchMatchCount" class="search-match-count"></span>
+      </div>
+      <button id="resetSearchBtn" class="reset-search-btn">← Back to Full Library Grid</button>
+    </div>
+
+    <!-- Container for Library Grid OR Search Shortlist -->
+    <div id="viewContainer" class="view-container">
+      <!-- Populated dynamically via app.js -->
+    </div>
+  </main>
+
+  <!-- Photo Detail / Lightbox Modal -->
+  <div id="lightbox" class="lightbox-backdrop" aria-hidden="true" role="dialog">
+    <div class="lightbox-content">
+      <div class="lightbox-image-container">
+        <img id="lightboxImg" class="lightbox-img" src="" alt="Photo preview">
+      </div>
+      <div class="lightbox-details">
+        <div class="lightbox-header">
+          <h2 id="lightboxTitle" class="lightbox-title"></h2>
+          <button id="lightboxClose" class="lightbox-close" aria-label="Close modal">&times;</button>
+        </div>
+        
+        <div id="lightboxDate" class="photo-meta-date"></div>
+        <div class="meta-divider"></div>
+        
+        <div id="lightboxMetaFields" class="meta-fields-list">
+          <!-- Metadata tags rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
