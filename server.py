@@ -5,7 +5,7 @@ import os
 import urllib.parse
 from search_engine import SearchEngine
 
-PORT = 8000
+PORT = int(os.environ.get("PORT", 8000))
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "dataset.json")
 PUBLIC_DIR = os.path.join(os.path.dirname(__file__), "public")
 
