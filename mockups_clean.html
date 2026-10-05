@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryLens — Clean Mobile Mockups (No Annotations)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #090e17;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: #94a3b8;
+      font-size: 15px;
+    }
+    .folder-pill {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      color: #7dd3fc;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 32px;
+    }
+    .mockup-card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .mockup-step {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #38bdf8;
+      margin-bottom: 6px;
+    }
+    .mockup-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+    .phone-container {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    }
+    .phone-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📱 MemoryLens — Clean Mobile Mockups</h1>
+    <p>Pure Smartphone Screens (9:16 Aspect Ratio) Without Any Annotations or Callout Boxes</p>
+    <div class="folder-pill">📁 Saved to: <code>mockups_clean/</code></div>
+  </div>
+
+  <div class="journey-grid">
+    <!-- Screen 1 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 1 · Entry Point</div>
+      <div class="mockup-title">Home / Library Grid</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups_clean/screen_1_home_grid.jpg" alt="Home Grid">
+      </div>
+    </div>
+
+    <!-- Screen 2 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 2 · Feature 1</div>
+      <div class="mockup-title">Multi-Signal Query Decomposition</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups_clean/screen_2_query_decomp.jpg" alt="Query Decomposition">
+      </div>
+    </div>
+
+    <!-- Screen 3 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 3 · Feature 2</div>
+      <div class="mockup-title">Clarifying Question Card (Ambiguity)</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups_clean/screen_3_clarifying_card.jpg" alt="Clarifying Question">
+      </div>
+    </div>
+
+    <!-- Screen 4 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 4 · Feature 3</div>
+      <div class="mockup-title">Ranked Shortlist with "Why This Matched"</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups_clean/screen_4_ranked_shortlist.jpg" alt="Ranked Shortlist">
+      </div>
+    </div>
+
+    <!-- Screen 5 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 5 · Scenario B</div>
+      <div class="mockup-title">Document Purpose vs. Raw OCR</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups_clean/screen_5_document_intent.jpg" alt="Document Intent">
+      </div>
+    </div>
+
+    <!-- Screen 6 -->
+    <div class="mockup-card">
+      <div class="mockup-step">Screen 6 · Confirmation</div>
+      <div class="mockup-title">Lightbox Detail & Metadata Sheet</div>
+      <div class="phone-container">
+        <img class="phone-img" src="mockups_clean/screen_6_detail_lightbox.jpg" alt="Detail Lightbox">
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
