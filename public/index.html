@@ -34,15 +34,20 @@
         <button class="toggle-btn active" data-mode="ai">AI Decomposed</button>
         <button class="toggle-btn" data-mode="literal">Literal Baseline</button>
       </div>
+
+      <!-- Add Photo Action Button -->
+      <button id="openAddPhotoBtn" class="add-photo-nav-btn" title="Add your photo to test retrieval">
+        <span class="plus-icon">+</span> Add Photo
+      </button>
     </div>
   </header>
 
   <!-- Main View Area -->
   <main class="main-content">
     <div class="phase-banner" id="phaseBanner">
-      <div class="phase-banner-badge">Phase 3 Active</div>
+      <div class="phase-banner-badge">Phase 5 Live</div>
       <div id="bannerText">
-        <strong>Ranked Shortlist UI Wired:</strong> Type a vague memory in the search bar above to test multi-signal AI decomposition vs. literal baseline search.
+        <strong>Test Retrieval With Your Own Photos:</strong> Click <em>"+ Add Photo"</em> to upload photos with memory tags, or search the library using natural language!
       </div>
     </div>
 
@@ -82,6 +87,118 @@
       </div>
     </div>
   </div>
+
+  <!-- Add Photo Modal -->
+  <div id="addPhotoModal" class="modal-backdrop" aria-hidden="true" role="dialog">
+    <div class="modal-content add-photo-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-badge">User Testing</div>
+          <h2 class="modal-title">📸 Add Photo to MemoryLens</h2>
+          <p class="modal-subtitle">Upload your photo and tag the memory signals so the AI search engine can retrieve it.</p>
+        </div>
+        <button id="closeAddPhotoBtn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <form id="addPhotoForm" class="add-photo-form">
+        <!-- Image Upload Area -->
+        <div class="form-section">
+          <label class="form-label required">1. Choose Photo Image</label>
+          <div class="upload-dropzone" id="uploadDropzone">
+            <input type="file" id="photoFileInput" accept="image/*" style="display: none;">
+            <div id="dropzoneEmpty" class="dropzone-empty">
+              <div class="dropzone-icon">📷</div>
+              <div class="dropzone-text">Click to choose image or drag & drop here</div>
+              <div class="dropzone-sub">Supports JPG, PNG, WEBP, SVG</div>
+            </div>
+            <div id="dropzonePreview" class="dropzone-preview" style="display: none;">
+              <img id="previewImage" src="" alt="Uploaded preview">
+              <button type="button" id="removeImageBtn" class="remove-img-btn">&times; Change Photo</button>
+            </div>
+          </div>
+          <div class="url-fallback-row">
+            <span>or paste image URL:</span>
+            <input type="url" id="imageUrlInput" class="form-input" placeholder="https://example.com/photo.jpg">
+          </div>
+        </div>
+
+        <!-- Memory & Context Signals -->
+        <div class="form-section">
+          <label class="form-label">2. People & Relationships (Who was in it?)</label>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="field-label">Relationship (e.g. roommate, sister, friend)</label>
+              <input type="text" id="relationshipInput" class="form-input" placeholder="e.g. roommate, friend">
+              <div class="chip-suggestions" id="relSuggestions">
+                <span class="chip-btn" data-val="roommate">+ roommate</span>
+                <span class="chip-btn" data-val="sister">+ sister</span>
+                <span class="chip-btn" data-val="friend">+ friend</span>
+                <span class="chip-btn" data-val="cousin">+ cousin</span>
+                <span class="chip-btn" data-val="mom">+ mom</span>
+                <span class="chip-btn" data-val="partner">+ partner</span>
+              </div>
+            </div>
+            <div class="form-group flex-1">
+              <label class="field-label">Tagged Names</label>
+              <input type="text" id="taggedNamesInput" class="form-input" placeholder="e.g. Alex, Maya">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">3. Location & Date (Where and when?)</label>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="field-label">Place Name / Venue</label>
+              <input type="text" id="placeNameInput" class="form-input" placeholder="e.g. Blue Bottle Coffee, Central Park">
+            </div>
+            <div class="form-group flex-1">
+              <label class="field-label">Approximate Date / Season</label>
+              <input type="text" id="dateRangeInput" class="form-input" placeholder="e.g. Summer 2024, October 2024">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">4. Visual Details & Event (What & why?)</label>
+          <div class="form-group">
+            <label class="field-label">Visual Descriptors (comma separated)</label>
+            <input type="text" id="visualDescriptorsInput" class="form-input" placeholder="e.g. outdoor seating, blue chairs, espresso, sunset">
+          </div>
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="field-label">Event / Activity Tags (comma separated)</label>
+            <input type="text" id="eventTagsInput" class="form-input" placeholder="e.g. birthday hangout, weekend trip, coffee chat">
+          </div>
+        </div>
+
+        <!-- Document / Receipt Section (Optional) -->
+        <div class="form-section doc-section">
+          <div class="doc-toggle-header" id="docToggleHeader">
+            <span>📄 Is this a Receipt, Ticket, or Document? (Optional)</span>
+            <span id="docToggleArrow">▼</span>
+          </div>
+          <div id="docFieldsContainer" style="display: none; margin-top: 10px;">
+            <div class="form-group">
+              <label class="field-label">Document Purpose (What is this receipt/ticket for?)</label>
+              <input type="text" id="docPurposeInput" class="form-input" placeholder="e.g. laptop purchase receipt, flight ticket">
+            </div>
+            <div class="form-group" style="margin-top: 8px;">
+              <label class="field-label">Printed Text / OCR (Optional keywords)</label>
+              <input type="text" id="ocrTextInput" class="form-input" placeholder="e.g. BEST BUY STORE #442, MACBOOK PRO">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancelAddPhotoBtn" class="btn-secondary">Cancel</button>
+          <button type="submit" id="savePhotoBtn" class="btn-primary">Save & Index Photo ✨</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast-notification" style="display: none;"></div>
 
   <script src="app.js"></script>
 </body>

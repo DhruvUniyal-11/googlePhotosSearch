@@ -99,10 +99,241 @@ function setupEventListeners() {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && state.selectedPhoto) {
-      closeLightbox();
+    if (e.key === 'Escape') {
+      if (state.selectedPhoto) closeLightbox();
+      const addModal = document.getElementById('addPhotoModal');
+      if (addModal && addModal.classList.contains('open')) {
+        addModal.classList.remove('open');
+      }
     }
   });
+
+  // =========================================================================
+  // Add Photo Modal & Form Handlers
+  // =========================================================================
+  const openAddPhotoBtn = document.getElementById('openAddPhotoBtn');
+  const closeAddPhotoBtn = document.getElementById('closeAddPhotoBtn');
+  const cancelAddPhotoBtn = document.getElementById('cancelAddPhotoBtn');
+  const addPhotoModal = document.getElementById('addPhotoModal');
+  const addPhotoForm = document.getElementById('addPhotoForm');
+  const photoFileInput = document.getElementById('photoFileInput');
+  const uploadDropzone = document.getElementById('uploadDropzone');
+  const dropzoneEmpty = document.getElementById('dropzoneEmpty');
+  const dropzonePreview = document.getElementById('dropzonePreview');
+  const previewImage = document.getElementById('previewImage');
+  const removeImageBtn = document.getElementById('removeImageBtn');
+  const imageUrlInput = document.getElementById('imageUrlInput');
+  const docToggleHeader = document.getElementById('docToggleHeader');
+  const docFieldsContainer = document.getElementById('docFieldsContainer');
+  const docToggleArrow = document.getElementById('docToggleArrow');
+  const relSuggestions = document.getElementById('relSuggestions');
+
+  let currentImageDataUrl = '';
+
+  if (openAddPhotoBtn) {
+    openAddPhotoBtn.addEventListener('click', () => {
+      addPhotoModal.classList.add('open');
+      addPhotoModal.setAttribute('aria-hidden', 'false');
+    });
+  }
+
+  function closeAddPhotoModal() {
+    if (!addPhotoModal) return;
+    addPhotoModal.classList.remove('open');
+    addPhotoModal.setAttribute('aria-hidden', 'true');
+    addPhotoForm.reset();
+    clearSelectedImage();
+  }
+
+  if (closeAddPhotoBtn) closeAddPhotoBtn.addEventListener('click', closeAddPhotoModal);
+  if (cancelAddPhotoBtn) cancelAddPhotoBtn.addEventListener('click', closeAddPhotoModal);
+  if (addPhotoModal) {
+    addPhotoModal.addEventListener('click', (e) => {
+      if (e.target === addPhotoModal) closeAddPhotoModal();
+    });
+  }
+
+  // Dropzone File Selection
+  if (uploadDropzone && photoFileInput) {
+    uploadDropzone.addEventListener('click', (e) => {
+      if (e.target !== removeImageBtn && !removeImageBtn.contains(e.target)) {
+        photoFileInput.click();
+      }
+    });
+
+    photoFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    uploadDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.add('dragover');
+    });
+
+    uploadDropzone.addEventListener('dragleave', () => {
+      uploadDropzone.classList.remove('dragover');
+    });
+
+    uploadDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  function handleFile(file) {
+    if (!file.type.startsWith('image/')) {
+      showToast('⚠️ Please select an image file (JPG, PNG, WEBP)');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      currentImageDataUrl = event.target.result;
+      previewImage.src = currentImageDataUrl;
+      dropzoneEmpty.style.display = 'none';
+      dropzonePreview.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearSelectedImage() {
+    currentImageDataUrl = '';
+    if (previewImage) previewImage.src = '';
+    if (photoFileInput) photoFileInput.value = '';
+    if (dropzoneEmpty) dropzoneEmpty.style.display = 'flex';
+    if (dropzonePreview) dropzonePreview.style.display = 'none';
+  }
+
+  if (removeImageBtn) {
+    removeImageBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearSelectedImage();
+    });
+  }
+
+  if (imageUrlInput) {
+    imageUrlInput.addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      if (url) {
+        currentImageDataUrl = url;
+        previewImage.src = url;
+        dropzoneEmpty.style.display = 'none';
+        dropzonePreview.style.display = 'flex';
+      }
+    });
+  }
+
+  // Relationship suggestion chips
+  if (relSuggestions) {
+    relSuggestions.addEventListener('click', (e) => {
+      if (e.target.classList.contains('chip-btn')) {
+        const val = e.target.dataset.val;
+        const relInput = document.getElementById('relationshipInput');
+        const currentVals = relInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (!currentVals.includes(val)) {
+          currentVals.push(val);
+          relInput.value = currentVals.join(', ');
+        }
+      }
+    });
+  }
+
+  // Document accordion toggle
+  if (docToggleHeader && docFieldsContainer && docToggleArrow) {
+    docToggleHeader.addEventListener('click', () => {
+      const isOpen = docFieldsContainer.style.display !== 'none';
+      docFieldsContainer.style.display = isOpen ? 'none' : 'block';
+      docToggleArrow.textContent = isOpen ? '▼' : '▲';
+    });
+  }
+
+  // Add Photo Form Submit
+  if (addPhotoForm) {
+    addPhotoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('savePhotoBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Indexing Photo...';
+
+      try {
+        const placeName = document.getElementById('placeNameInput').value.trim();
+        const relationships = document.getElementById('relationshipInput').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const taggedNames = document.getElementById('taggedNamesInput').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const visualDescriptors = document.getElementById('visualDescriptorsInput').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const eventTags = document.getElementById('eventTagsInput').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const approxDate = document.getElementById('dateRangeInput').value.trim() || 'Recent';
+        const docPurpose = document.getElementById('docPurposeInput').value.trim() || null;
+        const ocrText = document.getElementById('ocrTextInput').value.trim() || null;
+
+        // Fallback placeholder SVG if no image uploaded
+        let finalImageUrl = currentImageDataUrl || (imageUrlInput ? imageUrlInput.value.trim() : '');
+        if (!finalImageUrl) {
+          const title = placeName || (relationships[0] ? `With ${relationships[0]}` : 'My Photo');
+          const subtitle = visualDescriptors.slice(0, 2).join(' & ') || 'Added by user';
+          finalImageUrl = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='100%' height='100%' fill='%231e293b'/><circle cx='200' cy='120' r='50' fill='%2338bdf8' opacity='0.3'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23f8fafc' font-family='sans-serif' font-size='16'>${escapeHtml(title)}</text><text x='50%' y='65%' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-family='sans-serif' font-size='12'>${escapeHtml(subtitle)}</text></svg>`;
+        }
+
+        const payload = {
+          image_url: finalImageUrl,
+          place_name: placeName || null,
+          relationships: relationships,
+          tagged_names: taggedNames,
+          visual_descriptors: visualDescriptors,
+          event_tags: eventTags,
+          approx_date_range: approxDate,
+          document_purpose: docPurpose,
+          ocr_text: ocrText
+        };
+
+        const res = await fetch('/api/photos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Server returned an error');
+        const data = await res.json();
+
+        showToast('✨ Photo added & indexed! You can now search for it.');
+        closeAddPhotoModal();
+        await loadPhotos();
+        renderHomeLibrary();
+      } catch (err) {
+        console.error('Error adding photo:', err);
+        showToast('❌ Failed to save photo: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save & Index Photo ✨';
+      }
+    });
+  }
+
+  // Toast Helper
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 4500);
+  }
 }
 
 // Helper to format clean photo titles

@@ -3,9 +3,39 @@ import re
 import os
 
 class SearchEngine:
-    def __init__(self, dataset_path):
-        with open(dataset_path, "r", encoding="utf-8") as f:
-            self.dataset = json.load(f)
+    def __init__(self, dataset_path, user_dataset_path=None):
+        self.dataset_path = dataset_path
+        self.user_dataset_path = user_dataset_path or os.path.join(os.path.dirname(dataset_path), "user_photos.json")
+        self.load_all_photos()
+
+    def load_all_photos(self):
+        with open(self.dataset_path, "r", encoding="utf-8") as f:
+            self.seeded_dataset = json.load(f)
+        self.user_photos = []
+        if os.path.exists(self.user_dataset_path):
+            try:
+                with open(self.user_dataset_path, "r", encoding="utf-8") as f:
+                    self.user_photos = json.load(f)
+            except Exception as e:
+                print(f"Warning: could not load user_photos.json: {e}")
+                self.user_photos = []
+        self.dataset = self.user_photos + self.seeded_dataset
+        self._build_vocab()
+
+    def add_user_photo(self, photo_data):
+        self.user_photos.insert(0, photo_data)
+        with open(self.user_dataset_path, "w", encoding="utf-8") as f:
+            json.dump(self.user_photos, f, indent=2)
+        self.dataset = self.user_photos + self.seeded_dataset
+        self._build_vocab()
+        return photo_data
+
+    def reset_user_photos(self):
+        self.user_photos = []
+        if os.path.exists(self.user_dataset_path):
+            with open(self.user_dataset_path, "w", encoding="utf-8") as f:
+                json.dump([], f)
+        self.dataset = list(self.seeded_dataset)
         self._build_vocab()
 
     def _build_vocab(self):
@@ -55,10 +85,28 @@ class SearchEngine:
             "roommate": ["roommate"],
             "sister": ["sister"],
             "brother": ["brother"],
-            "friend": ["college friend"],
+            "friend": ["college friend", "friend"],
             "college friend": ["college friend"],
-            "cousin": ["cousin"]
+            "cousin": ["cousin"],
+            "mom": ["mom", "mother"],
+            "mother": ["mom", "mother"],
+            "dad": ["dad", "father"],
+            "father": ["dad", "father"],
+            "partner": ["partner"],
+            "husband": ["husband", "partner"],
+            "wife": ["wife", "partner"],
+            "boyfriend": ["boyfriend", "partner"],
+            "girlfriend": ["girlfriend", "partner"],
+            "dog": ["dog", "pet"],
+            "cat": ["cat", "pet"],
+            "coworker": ["coworker", "colleague"],
+            "colleague": ["coworker", "colleague"]
         }
+        for r in self.vocab_rel:
+            r_lower = r.lower()
+            if r_lower not in rel_map:
+                rel_map[r_lower] = [r_lower]
+
         extracted_rel = []
         for term, mapped in rel_map.items():
             if re.search(r'\b' + re.escape(term) + r'\b', q_lower):
@@ -323,6 +371,14 @@ class SearchEngine:
                     matched_signals_desc.append("multi-signal synergy bonus")
                 else:
                     final_score = base_score
+
+            if refinement:
+                ref_lower = refinement.lower()
+                # If refinement specifies a place and this photo didn't match place, discount it
+                if any(pt in ref_lower for pt in signals["visual_place_terms"]) and place_score == 0.0:
+                    final_score = base_score * 0.5
+                if any(rt in ref_lower for rt in signals["relational_terms"]) and rel_score == 0.0:
+                    final_score = base_score * 0.5
 
             if final_score >= 0.30:
                 confidence_band = "High Match" if final_score >= 0.70 else "Medium Match"
