@@ -3,40 +3,29 @@ import re
 import os
 
 class SearchEngine:
-    def __init__(self, dataset_path, user_dataset_path=None):
+    def __init__(self, dataset_path):
         self.dataset_path = dataset_path
-        self.user_dataset_path = user_dataset_path or os.path.join(os.path.dirname(dataset_path), "user_photos.json")
-        self.load_all_photos()
-
-    def load_all_photos(self):
         with open(self.dataset_path, "r", encoding="utf-8") as f:
             self.seeded_dataset = json.load(f)
-        self.user_photos = []
-        if os.path.exists(self.user_dataset_path):
-            try:
-                with open(self.user_dataset_path, "r", encoding="utf-8") as f:
-                    self.user_photos = json.load(f)
-            except Exception as e:
-                print(f"Warning: could not load user_photos.json: {e}")
-                self.user_photos = []
-        self.dataset = self.user_photos + self.seeded_dataset
-        self._build_vocab()
-
-    def add_user_photo(self, photo_data):
-        self.user_photos.insert(0, photo_data)
-        with open(self.user_dataset_path, "w", encoding="utf-8") as f:
-            json.dump(self.user_photos, f, indent=2)
-        self.dataset = self.user_photos + self.seeded_dataset
-        self._build_vocab()
-        return photo_data
-
-    def reset_user_photos(self):
-        self.user_photos = []
-        if os.path.exists(self.user_dataset_path):
-            with open(self.user_dataset_path, "w", encoding="utf-8") as f:
-                json.dump([], f)
         self.dataset = list(self.seeded_dataset)
         self._build_vocab()
+
+    def search_with_custom_photos(self, query, custom_photos, mode="ai", refinement=None, skip_clarification=False):
+        """
+        Temporarily injects browser-isolated custom photos for this search request only.
+        Ensures zero cross-user data leakage and keeps the base server dataset pristine.
+        """
+        original_dataset = self.dataset
+        try:
+            self.dataset = (custom_photos or []) + self.seeded_dataset
+            self._build_vocab()
+            if mode == "literal":
+                return self.search_literal_baseline(query)
+            else:
+                return self.search_ai_decomposed(query, refinement=refinement, skip_clarification=skip_clarification)
+        finally:
+            self.dataset = original_dataset
+            self._build_vocab()
 
     def _build_vocab(self):
         """

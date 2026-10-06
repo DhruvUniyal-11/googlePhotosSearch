@@ -16,13 +16,70 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderHomeLibrary();
 });
 
-// Fetch full library dataset from API
+// LocalStorage helpers for browser-isolated privacy
+const STORAGE_KEY = 'memorylens_user_photos';
+
+function getLocalPhotos() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('Error reading localStorage:', e);
+    return [];
+  }
+}
+
+function saveLocalPhoto(photo) {
+  const list = getLocalPhotos();
+  list.unshift(photo);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function clearLocalPhotos() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+// Update UI banner to reflect private testing state
+function updateBannerForLocalPhotos(localCount) {
+  const banner = document.getElementById('phaseBanner');
+  const bannerText = document.getElementById('bannerText');
+  if (!banner || !bannerText) return;
+
+  if (localCount > 0) {
+    bannerText.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
+        <span><strong>🔒 Private Testing Mode Active:</strong> You have <strong>${localCount}</strong> custom photo(s) stored privately in this browser only. Other users will NOT see them.</span>
+        <button id="clearLocalPhotosBtn" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">Clear My Photos</button>
+      </div>
+    `;
+    const clearBtn = document.getElementById('clearLocalPhotosBtn');
+    if (clearBtn) {
+      clearBtn.onclick = async () => {
+        if (confirm('Clear your private photos from this browser?')) {
+          clearLocalPhotos();
+          showToast('Cleared your private photos.');
+          await loadPhotos();
+          renderHomeLibrary();
+        }
+      };
+    }
+  } else {
+    bannerText.innerHTML = `
+      <strong>Test Retrieval With Your Own Photos:</strong> Click <em>"+ Add Photo"</em> to upload photos with memory tags. Photos stay <strong>100% private to your browser</strong> and are never saved on the server!
+    `;
+  }
+}
+
+// Fetch library dataset from API and merge with private local photos
 async function loadPhotos() {
   try {
     const res = await fetch('/api/photos');
     if (!res.ok) throw new Error('Failed to load dataset');
-    state.photos = await res.json();
-    console.log(`MemoryLens: Loaded ${state.photos.length} photo records.`);
+    const seeded = await res.json();
+    const local = getLocalPhotos();
+    state.photos = [...local, ...seeded];
+    updateBannerForLocalPhotos(local.length);
+    console.log(`MemoryLens: Loaded ${state.photos.length} photos (${local.length} private local, ${seeded.length} seeded).`);
   } catch (err) {
     console.error('Error loading dataset:', err);
   }
@@ -289,7 +346,9 @@ function setupEventListeners() {
           finalImageUrl = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='100%' height='100%' fill='%231e293b'/><circle cx='200' cy='120' r='50' fill='%2338bdf8' opacity='0.3'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23f8fafc' font-family='sans-serif' font-size='16'>${escapeHtml(title)}</text><text x='50%' y='65%' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-family='sans-serif' font-size='12'>${escapeHtml(subtitle)}</text></svg>`;
         }
 
-        const payload = {
+        const photo_id = `user_${Date.now()}`;
+        const photo_obj = {
+          photo_id: photo_id,
           image_url: finalImageUrl,
           place_name: placeName || null,
           relationships: relationships,
@@ -297,20 +356,15 @@ function setupEventListeners() {
           visual_descriptors: visualDescriptors,
           event_tags: eventTags,
           approx_date_range: approxDate,
+          date_taken: new Date().toISOString(),
           document_purpose: docPurpose,
           ocr_text: ocrText
         };
 
-        const res = await fetch('/api/photos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        // Save privately into this browser's localStorage
+        saveLocalPhoto(photo_obj);
 
-        if (!res.ok) throw new Error('Server returned an error');
-        const data = await res.json();
-
-        showToast('✨ Photo added & indexed! You can now search for it.');
+        showToast('🔒 Photo saved privately to your browser! No other users can see it.');
         closeAddPhotoModal();
         await loadPhotos();
         renderHomeLibrary();
@@ -408,13 +462,33 @@ async function performSearch(query, refinement = null, skip = false) {
   container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Analyzing memory signals...</div>';
 
   try {
-    let url = `/api/search?q=${encodeURIComponent(query)}&mode=${state.searchMode}`;
-    if (refinement) url += `&refinement=${encodeURIComponent(refinement)}`;
-    if (skip) url += `&skip=true`;
+    let searchData;
+    const localPhotos = getLocalPhotos();
 
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Search API request failed');
-    const searchData = await res.json();
+    if (localPhotos.length > 0) {
+      // Evaluates against user's private local photos in memory for this user only
+      const res = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          q: query,
+          mode: state.searchMode,
+          refinement: refinement,
+          skip: skip,
+          custom_photos: localPhotos
+        })
+      });
+      if (!res.ok) throw new Error('Search API request failed');
+      searchData = await res.json();
+    } else {
+      let url = `/api/search?q=${encodeURIComponent(query)}&mode=${state.searchMode}`;
+      if (refinement) url += `&refinement=${encodeURIComponent(refinement)}`;
+      if (skip) url += `&skip=true`;
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Search API request failed');
+      searchData = await res.json();
+    }
 
     document.getElementById('searchMatchCount').textContent = `${searchData.total_matches} photo${searchData.total_matches === 1 ? '' : 's'} matched (${modeLabel})`;
 

@@ -19,13 +19,14 @@ class PhotoAssistantHandler(http.server.SimpleHTTPRequestHandler):
         parsed_url = urllib.parse.urlparse(self.path)
         query_params = urllib.parse.parse_qs(parsed_url.query)
         
-        # API Endpoint: GET /api/photos
+        # API Endpoint: GET /api/photos (Always serves the clean, baseline seeded dataset)
         if parsed_url.path == "/api/photos":
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            self.wfile.write(json.dumps(engine.dataset).encode("utf-8"))
+            with open(DATA_PATH, "r", encoding="utf-8") as f:
+                self.wfile.write(f.read().encode("utf-8"))
             return
 
         # API Endpoint: GET /api/search?q=...&mode=ai|literal&refinement=...&skip=true|false
@@ -62,7 +63,8 @@ class PhotoAssistantHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         parsed_url = urllib.parse.urlparse(self.path)
 
-        if parsed_url.path == "/api/photos":
+        # POST /api/search: Evaluates search queries with optional browser-isolated custom photos in memory
+        if parsed_url.path == "/api/search":
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
             try:
@@ -75,47 +77,22 @@ class PhotoAssistantHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": f"Invalid JSON: {str(e)}"}).encode("utf-8"))
                 return
 
-            import time
-            photo_id = data.get("photo_id") or f"user_photo_{int(time.time()*1000)}"
-            photo_obj = {
-                "photo_id": photo_id,
-                "image_url": data.get("image_url", ""),
-                "date_taken": data.get("date_taken") or time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "approx_date_range": data.get("approx_date_range", "Recent"),
-                "relationships": [r.strip() for r in data.get("relationships", []) if r.strip()],
-                "tagged_names": [n.strip() for n in data.get("tagged_names", []) if n.strip()],
-                "place_name": data.get("place_name") or None,
-                "visual_descriptors": [v.strip() for v in data.get("visual_descriptors", []) if v.strip()],
-                "event_tags": [e.strip() for e in data.get("event_tags", []) if e.strip()],
-                "ocr_text": data.get("ocr_text") or None,
-                "document_purpose": data.get("document_purpose") or None
-            }
+            q = data.get("q", "")
+            mode = data.get("mode", "ai")
+            refinement = data.get("refinement")
+            skip = bool(data.get("skip", False))
+            custom_photos = data.get("custom_photos", [])
 
-            engine.add_user_photo(photo_obj)
+            # Evaluates in-memory for this single user session with zero disk persistence
+            res = engine.search_with_custom_photos(
+                q, custom_photos, mode=mode, refinement=refinement, skip_clarification=skip
+            )
 
-            self.send_response(201)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(json.dumps({
-                "status": "success",
-                "message": "Photo added and indexed successfully",
-                "photo": photo_obj,
-                "total_photos": len(engine.dataset)
-            }).encode("utf-8"))
-            return
-
-        if parsed_url.path == "/api/photos/reset":
-            engine.reset_user_photos()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            self.wfile.write(json.dumps({
-                "status": "success",
-                "message": "Reset to default seeded dataset",
-                "total_photos": len(engine.dataset)
-            }).encode("utf-8"))
+            self.wfile.write(json.dumps(res).encode("utf-8"))
             return
 
         self.send_response(404)
