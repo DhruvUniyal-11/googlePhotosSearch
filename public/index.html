@@ -104,18 +104,19 @@
         <!-- Image Upload Area -->
         <div class="form-section">
           <label class="form-label required">1. Choose Photo Image</label>
-          <div class="upload-dropzone" id="uploadDropzone">
-            <input type="file" id="photoFileInput" accept="image/*" style="display: none;">
+          <label for="photoFileInput" class="upload-dropzone" id="uploadDropzone">
+            <input type="file" id="photoFileInput" accept="image/*" class="sr-only">
             <div id="dropzoneEmpty" class="dropzone-empty">
               <div class="dropzone-icon">📷</div>
-              <div class="dropzone-text">Click to choose image or drag & drop here</div>
-              <div class="dropzone-sub">Supports JPG, PNG, WEBP, SVG</div>
+              <div class="dropzone-text">Click anywhere to choose image or drag & drop here</div>
+              <div class="dropzone-sub">Supports JPG, PNG, WEBP, SVG (Auto-compressed)</div>
+              <span class="dropzone-browse-badge">📁 Browse Files on Laptop</span>
             </div>
             <div id="dropzonePreview" class="dropzone-preview" style="display: none;">
               <img id="previewImage" src="" alt="Uploaded preview">
               <button type="button" id="removeImageBtn" class="remove-img-btn">&times; Change Photo</button>
             </div>
-          </div>
+          </label>
           <div class="url-fallback-row">
             <span>or paste image URL:</span>
             <input type="url" id="imageUrlInput" class="form-input" placeholder="https://example.com/photo.jpg">

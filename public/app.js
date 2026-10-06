@@ -30,9 +30,23 @@ function getLocalPhotos() {
 }
 
 function saveLocalPhoto(photo) {
-  const list = getLocalPhotos();
+  let list = getLocalPhotos();
   list.unshift(photo);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch (err) {
+    if (err.name === 'QuotaExceededError' || err.code === 22) {
+      // Automatically keep the most recent photos if browser storage limit is reached
+      while (list.length > 1) {
+        list.pop();
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+          return;
+        } catch (inner) {}
+      }
+    }
+    throw err;
+  }
 }
 
 function clearLocalPhotos() {
@@ -210,20 +224,16 @@ function setupEventListeners() {
     });
   }
 
-  // Dropzone File Selection
-  if (uploadDropzone && photoFileInput) {
-    uploadDropzone.addEventListener('click', (e) => {
-      if (e.target !== removeImageBtn && !removeImageBtn.contains(e.target)) {
-        photoFileInput.click();
-      }
-    });
-
+  // Dropzone File Selection & Drag-and-Drop
+  if (photoFileInput) {
     photoFileInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
         handleFile(e.target.files[0]);
       }
     });
+  }
 
+  if (uploadDropzone) {
     uploadDropzone.addEventListener('dragover', (e) => {
       e.preventDefault();
       uploadDropzone.classList.add('dragover');
@@ -236,25 +246,81 @@ function setupEventListeners() {
     uploadDropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       uploadDropzone.classList.remove('dragover');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
         handleFile(e.dataTransfer.files[0]);
       }
     });
   }
 
-  function handleFile(file) {
-    if (!file.type.startsWith('image/')) {
-      showToast('⚠️ Please select an image file (JPG, PNG, WEBP)');
-      return;
-    }
+  // Automatic client-side canvas image optimizer (compresses large camera photos to ~70KB)
+  function compressImage(file, callback) {
     const reader = new FileReader();
-    reader.onload = (event) => {
-      currentImageDataUrl = event.target.result;
-      previewImage.src = currentImageDataUrl;
-      dropzoneEmpty.style.display = 'none';
-      dropzonePreview.style.display = 'flex';
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 900;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height = Math.round((height * MAX_SIZE) / width);
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width = Math.round((width * MAX_SIZE) / height);
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Highly optimized JPEG string
+          const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          callback(optimizedDataUrl);
+        } catch (canvasErr) {
+          console.warn('Canvas optimization fallback:', canvasErr);
+          callback(e.target.result);
+        }
+      };
+      img.onerror = () => {
+        callback(e.target.result);
+      };
+      img.src = e.target.result;
+    };
+    reader.onerror = () => {
+      showToast('⚠️ Error reading selected file');
     };
     reader.readAsDataURL(file);
+  }
+
+  function handleFile(file) {
+    if (!file || (!file.type.startsWith('image/') && !file.name.match(/\.(jpg|jpeg|png|webp|heic|svg)$/i))) {
+      showToast('⚠️ Please select a valid photo file (JPG, PNG, WebP)');
+      return;
+    }
+
+    if (dropzoneEmpty) dropzoneEmpty.style.display = 'none';
+    if (dropzonePreview) dropzonePreview.style.display = 'flex';
+    if (previewImage) {
+      previewImage.src = '';
+      previewImage.alt = 'Optimizing photo...';
+    }
+
+    compressImage(file, (optimizedUrl) => {
+      currentImageDataUrl = optimizedUrl;
+      if (previewImage) {
+        previewImage.src = optimizedUrl;
+        previewImage.alt = 'Uploaded preview';
+      }
+      showToast('📷 Photo loaded & ready to tag!');
+    });
   }
 
   function clearSelectedImage() {
@@ -267,6 +333,7 @@ function setupEventListeners() {
 
   if (removeImageBtn) {
     removeImageBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       clearSelectedImage();
     });
