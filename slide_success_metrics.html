@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryLens — Slide 09: Success Metrics (16:9 Landscape)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #030712;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .slide-wrapper {
+      width: 100%;
+      max-width: 1400px;
+      aspect-ratio: 16 / 9;
+      background: radial-gradient(circle at 12% 15%, #0f1f3d 0%, #060b17 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 100px rgba(56, 189, 248, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .slide-wrapper::before {
+      content: "";
+      position: absolute;
+      top: -140px;
+      right: -140px;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+    .title-group h1 {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #34d399 70%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .title-group .subtitle {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .badge-group {
+      display: flex;
+      gap: 10px;
+    }
+    .pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.02em;
+    }
+    .pill-green {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .pill-cyan {
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+    }
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* North Star Banner */
+    .north-star-bar {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 10px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+    }
+    .north-star-bar .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .north-star-tag {
+      background: #10b981;
+      color: #022c22;
+      font-weight: 800;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .north-star-bar strong {
+      color: #f1f5f9;
+      font-weight: 700;
+    }
+    .north-star-target {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #34d399;
+      font-size: 13px;
+    }
+
+    /* 4 Column Layout */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1.1fr 1.25fr 1.15fr 1.1fr;
+      gap: 16px;
+      flex: 1;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 16px 15px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .card-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-title.green { color: #34d399; }
+    .card-title.blue { color: #38bdf8; }
+    .card-title.purple { color: #a78bfa; }
+    .card-title.amber { color: #fbbf24; }
+
+    /* Highlight Metric Callout */
+    .metric-callout {
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .metric-callout.green {
+      background: rgba(16, 185, 129, 0.1);
+      border-left: 3px solid #10b981;
+    }
+    .metric-callout.blue {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 3px solid #0ea5e9;
+    }
+    .metric-callout.purple {
+      background: rgba(168, 85, 247, 0.1);
+      border-left: 3px solid #a855f7;
+    }
+    .metric-callout.amber {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 3px solid #f59e0b;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.1;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .metric-val.green { color: #34d399; }
+    .metric-val.blue { color: #7dd3fc; }
+    .metric-val.purple { color: #c084fc; }
+    .metric-val.amber { color: #fde047; }
+    .metric-baseline {
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: #cbd5e1;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    /* Metric List Rows */
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 11px;
+    }
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+    .metric-row .name {
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .metric-row .target {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-align: right;
+    }
+    .metric-sub {
+      font-size: 9.5px;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    .footer-bar {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .footer-bar span strong {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide-wrapper">
+    <!-- Header -->
+    <div class="header">
+      <div class="title-group">
+        <h1><span>09</span> Success Metrics: Proving Task Completion & Search Trust</h1>
+        <div class="subtitle">Replacing vanity query volumes with verified user photo discovery without session abandonment</div>
+      </div>
+      <div class="badge-group">
+        <span class="pill pill-green"><span class="pill-dot"></span> North Star: TCRR ≥ 85%</span>
+        <span class="pill pill-cyan"><span class="pill-dot"></span> P95 Latency ≤ 1.2s</span>
+      </div>
+    </div>
+
+    <!-- North Star Banner -->
+    <div class="north-star-bar">
+      <div class="left">
+        <span class="north-star-tag">North Star Metric</span>
+        <span><strong>Task-Completion Retrieval Rate (TCRR):</strong> % of vague sessions finding the target photo in lightbox without abandonment</span>
+      </div>
+      <div class="north-star-target">Target: ≥ 85.0% <span style="color: #64748b; font-size: 11px; font-weight: normal;">(vs. 18.2% Keyword Baseline)</span></div>
+    </div>
+
+    <!-- 4 Pillar Grid -->
+    <div class="grid-4">
+      <!-- Col 1: Business & Retention Impact -->
+      <div class="card">
+        <div class="card-title green">💼 Business & Retention</div>
+        
+        <div class="metric-callout green">
+          <div class="metric-val green">&lt; 20% <span class="metric-baseline">from 68%</span></div>
+          <div class="metric-label">Search Abandonment Rate</div>
+          <div class="metric-sub">Directly cures Stage 6 terminal drop-off</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Weekly Search Freq.</div>
+            <div class="metric-sub">Active search adoption</div>
+          </div>
+          <div class="target" style="color: #34d399;">+35% MAU</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Grid-Scroll Sinking</div>
+            <div class="metric-sub">Chronic timeline scrolling</div>
+          </div>
+          <div class="target" style="color: #34d399;">-40% drop</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Reformulation Loops</div>
+            <div class="metric-sub">Desperate re-queries (≥3x)</div>
+          </div>
+          <div class="target" style="color: #34d399;">&lt; 8% of sessions</div>
+        </div>
+      </div>
+
+      <!-- Col 2: Retrieval Quality & Accuracy -->
+      <div class="card">
+        <div class="card-title blue">🎯 Algorithmic Accuracy</div>
+
+        <div class="metric-callout blue">
+          <div class="metric-val blue">≥ 75.0% <span class="metric-baseline">vs 14.3% base</span></div>
+          <div class="metric-label">Top-1 Accuracy (Precision@1)</div>
+          <div class="metric-sub">Target photo ranked as exact #1 card</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Top-3 Shortlist Recall</div>
+            <div class="metric-sub">Target photo in top 3</div>
+          </div>
+          <div class="target" style="color: #7dd3fc;">≥ 90.0% <span style="font-size: 9px; color:#64748b;">(28% base)</span></div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Mean Recip. Rank (MRR)</div>
+            <div class="metric-sub">Relevance rank efficiency</div>
+          </div>
+          <div class="target" style="color: #7dd3fc;">0.82 <span style="font-size: 9px; color:#64748b;">(0.21 base)</span></div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Distractor Immunity</div>
+            <div class="metric-sub">OCR book near-misses</div>
+          </div>
+          <div class="target" style="color: #34d399;">100% Reject</div>
+        </div>
+      </div>
+
+      <!-- Col 3: User Efficiency & UX Flow -->
+      <div class="card">
+        <div class="card-title purple">⚡ User Efficiency & UX</div>
+
+        <div class="metric-callout purple">
+          <div class="metric-val purple">&lt; 6.0s <span class="metric-baseline">vs 45–90s grid</span></div>
+          <div class="metric-label">Time-to-Retrieve (TTR)</div>
+          <div class="metric-sub">Median seconds from query to lightbox</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Disambiguation Rate</div>
+            <div class="metric-sub">Feature 2 question success</div>
+          </div>
+          <div class="target" style="color: #c084fc;">≥ 75.0% resolved</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Strict 1-Turn Cap</div>
+            <div class="metric-sub">Zero recursive chat loops</div>
+          </div>
+          <div class="target" style="color: #34d399;">100% compliant</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Shortlist CTR (Top-3)</div>
+            <div class="metric-sub">Average scans before click</div>
+          </div>
+          <div class="target" style="color: #c084fc;">≥ 80% (≤3.2 scans)</div>
+        </div>
+      </div>
+
+      <!-- Col 4: Guardrail Counter-Metrics -->
+      <div class="card">
+        <div class="card-title amber">🛡️ Guardrail Metrics</div>
+
+        <div class="metric-callout amber">
+          <div class="metric-val amber">≤ 1.2s <span class="metric-baseline">P95 Budget</span></div>
+          <div class="metric-label">Round-Trip Latency</div>
+          <div class="metric-sub">Decomposition + scoring + UI render</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Clarification Trigger</div>
+            <div class="metric-sub">Prevent conversational fatigue</div>
+          </div>
+          <div class="target" style="color: #fbbf24;">≤ 20% searches</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Zero-Match Precision</div>
+            <div class="metric-sub">When photo does not exist</div>
+          </div>
+          <div class="target" style="color: #fbbf24;">0% hallucinated</div>
+        </div>
+
+        <div class="metric-row">
+          <div>
+            <div class="name">Data Privacy Isolation</div>
+            <div class="metric-sub">Server disk persistence</div>
+          </div>
+          <div class="target" style="color: #34d399;">0 bytes saved</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-bar">
+      <span><strong>Evaluation Method:</strong> 28-photo golden benchmark set + automated edge-case test suite (`test_phase5_e2e.py`)</span>
+      <span>Live Verification: <span style="font-family: 'JetBrains Mono', monospace; color: #38bdf8;">https://googlephotossearch.onrender.com</span></span>
+    </div>
+  </div>
+</body>
+</html>

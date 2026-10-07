@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryLens — PM Presentation Deck (Slides 8, 9, 10)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #030712;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .deck-nav {
+      background: rgba(11, 15, 25, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #fff 30%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tabs-group {
+      display: flex;
+      gap: 8px;
+    }
+    .slide-tab-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .slide-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f1f5f9;
+    }
+    .slide-tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: #64748b;
+    }
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .nav-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .viewport {
+      flex: 1;
+      position: relative;
+      background: #030712;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-nav">
+    <div class="brand">
+      <span>✨ MemoryLens</span>
+      <span style="color: #64748b; font-weight: normal; font-size: 12px;">| PM Deck Presentation</span>
+    </div>
+
+    <div class="tabs-group">
+      <button class="slide-tab-btn" onclick="switchSlide('slide.html', 0)">
+        <span>Slide 08</span> MVP & User Testing
+      </button>
+      <button class="slide-tab-btn active" onclick="switchSlide('slide_success_metrics.html', 1)">
+        <span>Slide 09</span> Success Metrics
+      </button>
+      <button class="slide-tab-btn" onclick="switchSlide('slide_risks_limitations.html', 2)">
+        <span>Slide 10</span> Risks & Limitations
+      </button>
+    </div>
+
+    <div class="nav-controls">
+      <span>Use <strong>← / →</strong> keys</span>
+      <button class="nav-btn" onclick="prevSlide()">◀ Prev</button>
+      <button class="nav-btn" onclick="nextSlide()">Next ▶</button>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <iframe id="slideFrame" src="slide_success_metrics.html" title="Slide Frame"></iframe>
+  </div>
+
+  <script>
+    const slides = [
+      'slide.html',
+      'slide_success_metrics.html',
+      'slide_risks_limitations.html'
+    ];
+    let currentIndex = 1;
+
+    function switchSlide(url, index) {
+      currentIndex = index;
+      document.getElementById('slideFrame').src = url;
+      document.querySelectorAll('.slide-tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        switchSlide(slides[currentIndex - 1], currentIndex - 1);
+      }
+    }
+
+    function nextSlide() {
+      if (currentIndex < slides.length - 1) {
+        switchSlide(slides[currentIndex + 1], currentIndex + 1);
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    });
+  </script>
+</body>
+</html>

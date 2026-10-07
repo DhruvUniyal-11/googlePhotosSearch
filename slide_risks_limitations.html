@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryLens — Slide 10: Risks & Limitations (16:9 Landscape)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #030712;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .slide-wrapper {
+      width: 100%;
+      max-width: 1400px;
+      aspect-ratio: 16 / 9;
+      background: radial-gradient(circle at 12% 15%, #19142b 0%, #080713 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 100px rgba(244, 63, 94, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .slide-wrapper::before {
+      content: "";
+      position: absolute;
+      top: -140px;
+      right: -140px;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.12), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+    .title-group h1 {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #fb7185 70%, #f43f5e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .title-group .subtitle {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .badge-group {
+      display: flex;
+      gap: 10px;
+    }
+    .pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.02em;
+    }
+    .pill-rose {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+    .pill-amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde047;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* 4 Column Layout */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .card-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-title.blue { color: #38bdf8; }
+    .card-title.amber { color: #fbbf24; }
+    .card-title.purple { color: #c084fc; }
+    .card-title.rose { color: #fb7185; }
+
+    /* Risk Box */
+    .risk-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 10px 11px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .risk-box:last-child {
+      margin-bottom: 0;
+    }
+    .risk-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .risk-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .risk-tag {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tag-high { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .tag-med { background: rgba(245, 158, 11, 0.2); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .tag-scope { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.35); }
+
+    .risk-desc {
+      font-size: 10px;
+      color: #94a3b8;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .mitigation-box {
+      background: rgba(16, 185, 129, 0.07);
+      border-left: 2px solid #10b981;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #cbd5e1;
+      line-height: 1.35;
+    }
+    .mitigation-box strong {
+      color: #34d399;
+      font-weight: 700;
+    }
+
+    .footer-bar {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .footer-bar span strong {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide-wrapper">
+    <!-- Header -->
+    <div class="header">
+      <div class="title-group">
+        <h1><span>10</span> Risks, Limitations & Strategic Mitigations</h1>
+        <div class="subtitle">Bounding AI semantic intelligence with deterministic safeguards, strict UX limits, and privacy enclaves</div>
+      </div>
+      <div class="badge-group">
+        <span class="pill pill-rose"><span class="pill-dot"></span> Strict 1-Turn Cap</span>
+        <span class="pill pill-amber"><span class="pill-dot"></span> Private On-Device Enclave</span>
+      </div>
+    </div>
+
+    <!-- 4 Pillar Grid -->
+    <div class="grid-4">
+      <!-- Col 1: Algorithmic & Model Boundaries -->
+      <div class="card">
+        <div class="card-title blue">🧠 Algorithmic & Model</div>
+
+        <!-- Risk 1 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">Decomposition Drift</span>
+            <span class="risk-tag tag-med">Med Severity</span>
+          </div>
+          <div class="risk-desc">LLM misclassifies idioms or slang (e.g. <em>"sick trip"</em> mapped to medical illness instead of vacation).</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> Active category score normalization + deterministic templated match explanations (0 hallucinations).
+          </div>
+        </div>
+
+        <!-- Risk 2 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">People Graph Cold Start</span>
+            <span class="risk-tag tag-high">High Severity</span>
+          </div>
+          <div class="risk-desc">User hasn't tagged relational roles (who is <em>"roommate"</em> vs <em>"sister"</em>) in their library.</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> 1-tap chip tagging in photo detail + face co-occurrence inference + fallback to visual/place signals.
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: Product & UX Interaction -->
+      <div class="card">
+        <div class="card-title amber">💬 Product & UX Guardrails</div>
+
+        <!-- Risk 3 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">Clarification Fatigue</span>
+            <span class="risk-tag tag-high">High Risk</span>
+          </div>
+          <div class="risk-desc">Google Photos is an instant utility, not a chatbot. Asking multiple questions induces user annoyance.</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> <strong>Hardcoded 1-turn maximum</strong> (never chains a 2nd question) + visible instant "Skip" button.
+          </div>
+        </div>
+
+        <!-- Risk 4 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">False-Match Anchoring</span>
+            <span class="risk-tag tag-med">Med Risk</span>
+          </div>
+          <div class="risk-desc">Showing green "High Match" badges on wrong photos quickly erodes user trust in AI search.</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> 1.25x synergy multiplier requires co-occurrence of independent signals; scores &lt; 0.40 strictly filtered.
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: Engineering, Latency & Scale -->
+      <div class="card">
+        <div class="card-title purple">⚙️ Technical & Scale</div>
+
+        <!-- Risk 5 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">Inference Latency & Cost</span>
+            <span class="risk-tag tag-high">High Cost</span>
+          </div>
+          <div class="risk-desc">Calling cloud LLM for every keystroke across 1B+ MAU is financially and latency prohibitive.</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> Two-tier architecture: lightweight distilled SLM on-device (Gecko 250M) + pre-computed local HNSW vectors.
+          </div>
+        </div>
+
+        <!-- Risk 6 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">Personal Document Privacy</span>
+            <span class="risk-tag tag-high">Critical</span>
+          </div>
+          <div class="risk-desc">Parsing receipts, invoices, and family contacts triggers acute user privacy anxiety.</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> 100% on-device secure enclave processing; zero server image retention (proven in MVP browser sandbox).
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 4: Research Assumptions & Non-Goals -->
+      <div class="card">
+        <div class="card-title rose">🔬 Research & Non-Goals</div>
+
+        <!-- Risk 7 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">Survey vs. Interview Gap</span>
+            <span class="risk-tag tag-med">Assumption</span>
+          </div>
+          <div class="risk-desc">Target priority (#1 Relational, #2 Document) is survey-corrected (n=39) but pending qualitative interviews.</div>
+          <div class="mitigation-box">
+            <strong>Mitigation:</strong> Explicitly acknowledged as active assumption; modular scoring weights dynamically retuned post-study.
+          </div>
+        </div>
+
+        <!-- Risk 8 -->
+        <div class="risk-box">
+          <div class="risk-header">
+            <span class="risk-name">Deliberate Scope Boundaries</span>
+            <span class="risk-tag tag-scope">Scope</span>
+          </div>
+          <div class="risk-desc">Excludes Stage 1 (expression is not broken) and Stage 3 (distributed index rewrite).</div>
+          <div class="mitigation-box">
+            <strong>Focus:</strong> Targets Stage 2 (System Understanding, 54.5% of failures) where semantic intelligence has highest ROI.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-bar">
+      <span><strong>Strategic Summary:</strong> Constraining intelligence to Stage 2 avoids conversational bloat while solving 54.5% of root-cause retrieval failures.</span>
+      <span>Tested in MVP Sandbox: <span style="font-family: 'JetBrains Mono', monospace; color: #fb7185;">Strict 1-Turn Cap & Isolated Client Storage</span></span>
+    </div>
+  </div>
+</body>
+</html>
